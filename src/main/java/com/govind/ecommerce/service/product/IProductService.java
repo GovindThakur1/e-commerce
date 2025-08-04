@@ -1,16 +1,18 @@
 package com.govind.ecommerce.service.product;
 
 import com.govind.ecommerce.model.Product;
+import com.govind.ecommerce.request.AddProductRequest;
+import com.govind.ecommerce.request.ProductUpdateRequest;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    Product addProduct(Product product);
+    Product addProduct(AddProductRequest request);
 
     Product getProductById(Long id);
 
-    Product updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest request, Long productId);
 
     void deleteProductById(Long id);
 

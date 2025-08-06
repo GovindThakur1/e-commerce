@@ -1,5 +1,6 @@
 package com.govind.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Image {
     private Blob image;
     private String downloadUrl;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

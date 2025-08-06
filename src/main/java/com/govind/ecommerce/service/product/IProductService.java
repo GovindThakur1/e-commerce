@@ -1,5 +1,6 @@
 package com.govind.ecommerce.service.product;
 
+import com.govind.ecommerce.dto.ProductDto;
 import com.govind.ecommerce.model.Product;
 import com.govind.ecommerce.request.AddProductRequest;
 import com.govind.ecommerce.request.ProductUpdateRequest;
@@ -30,8 +31,7 @@ public interface IProductService {
 
     Long countProductsByBrandAndName(String brand, String productName);
 
+    List<ProductDto> getConvertedProducts(List<Product> products);
 
-
-
-
+    ProductDto convertToDto(Product product);
 }

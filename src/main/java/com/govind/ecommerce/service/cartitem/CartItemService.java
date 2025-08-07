@@ -1,6 +1,7 @@
 package com.govind.ecommerce.service.cartitem;
 
 import com.govind.ecommerce.exception.ProductNotFoundException;
+import com.govind.ecommerce.exception.ResourceNotFoundException;
 import com.govind.ecommerce.model.Cart;
 import com.govind.ecommerce.model.CartItem;
 import com.govind.ecommerce.model.Product;
@@ -60,15 +61,17 @@ public class CartItemService implements ICartItemService {
     @Override
     public void updateItemQuantity(Long cartId, Long productId, int quantity) {
         Cart cart = cartService.getCart(cartId);
-        cart.getCartItems()
+        CartItem cartItem = cart.getCartItems()
                 .stream()
-                .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
+                .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .ifPresent(cartItem -> {
-                    cartItem.setQuantity(quantity);
-                    cartItem.setUnitPrice(cartItem.getProduct().getPrice());
-                    cart.updateTotalAmount();
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in the cart item"));
+
+        cartItem.setQuantity(quantity);
+        cartItem.setUnitPrice(cartItem.getProduct().getPrice());
+        cartItem.setTotalPrice();
+        cartItemRepository.save(cartItem);
+
         cart.updateTotalAmount();
         cartRepository.save(cart);
     }

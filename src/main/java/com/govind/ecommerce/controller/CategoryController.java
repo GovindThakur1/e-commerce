@@ -41,7 +41,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/{categoryId}/category")
+    @GetMapping("/category/{categoryId}/id")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long categoryId) {
         try {
             Category category = categoryService.getCategoryById(categoryId);
@@ -51,8 +51,8 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/{name}/category")
-    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable String name) {
+    @GetMapping("/category/{name}/name")
+    public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
             Category category = categoryService.getCategoryByName(name);
             return ResponseEntity.ok(new ApiResponse("Found", category));

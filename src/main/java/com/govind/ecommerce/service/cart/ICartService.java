@@ -1,6 +1,8 @@
 package com.govind.ecommerce.service.cart;
 
+import com.govind.ecommerce.dto.CartDto;
 import com.govind.ecommerce.model.Cart;
+import com.govind.ecommerce.model.User;
 
 import java.math.BigDecimal;
 
@@ -11,8 +13,10 @@ public interface ICartService {
 
     BigDecimal getTotalPrice(Long id);
 
-    Long initializeNewCart();
+    Cart initializeNewCart(User user);
 
     Cart getCartByUserId(Long userId);
+
+    CartDto mapCartToDto(Cart cart);
 
 }

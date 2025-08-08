@@ -14,5 +14,5 @@ import java.util.Set;
 public class CartDto {
     private Long id;
     private BigDecimal totalAmount = BigDecimal.ZERO;
-    private Set<CartItemDto> items = new HashSet<>();
+    private Set<CartItemDto> cartItems = new HashSet<>();
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class OrderService implements IOrderService {
 
 
     @Override
-    public OrderDto placeOrder(Long userId) {
+    public Order placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
 
         Order order = createOrder(cart);
@@ -45,7 +46,7 @@ public class OrderService implements IOrderService {
         Order savedOrder = orderRepository.save(order);
 
         cartService.clearCart(cart.getId());
-        return mapOrderToDto(savedOrder);
+        return savedOrder;
     }
 
 
@@ -86,24 +87,21 @@ public class OrderService implements IOrderService {
 
 
     @Override
-    public OrderDto getOrder(Long orderId) {
+    public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId)
-                .map(this::mapOrderToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     @Override
-    public List<OrderDto> getOrdersByUser(Long userId) {
+    public List<Order> getOrdersByUser(Long userId) {
         return Optional.of(userService.getUserById(userId))
                 .map(user -> orderRepository.findAllByUserId(user.getId()))
-                .map(orders -> orders.stream()
-                        .map(this::mapOrderToDto)
-                        .toList()
-                )
+                .map(ArrayList::new)
                 .orElseThrow(() -> new ResourceNotFoundException("Order/s not found for this user"));
     }
 
-    private OrderDto mapOrderToDto(Order order) {
+    @Override
+    public OrderDto mapOrderToDto(Order order) {
         return modelMapper.map(order, OrderDto.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.govind.ecommerce.controller;
 
+import com.govind.ecommerce.dto.CartDto;
 import com.govind.ecommerce.exception.ResourceNotFoundException;
 import com.govind.ecommerce.model.Cart;
 import com.govind.ecommerce.response.ApiResponse;
@@ -7,6 +8,7 @@ import com.govind.ecommerce.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -47,6 +49,17 @@ public class CartController {
             return ResponseEntity.ok(new ApiResponse("Success!", totalPrice));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/cart/user/{userId}")
+    public ResponseEntity<ApiResponse> getCartByUserId(@PathVariable Long userId) {
+        try {
+            Cart cart = cartService.getCartByUserId(userId);
+            CartDto cartDto = cartService.mapCartToDto(cart);
+            return ResponseEntity.ok(new ApiResponse("Cart found", cartDto));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
 

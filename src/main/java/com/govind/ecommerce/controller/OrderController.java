@@ -2,6 +2,7 @@ package com.govind.ecommerce.controller;
 
 import com.govind.ecommerce.dto.OrderDto;
 import com.govind.ecommerce.exception.ResourceNotFoundException;
+import com.govind.ecommerce.model.Order;
 import com.govind.ecommerce.response.ApiResponse;
 import com.govind.ecommerce.service.order.IOrderService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,9 @@ public class OrderController {
     @PostMapping("/order")
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
-            OrderDto order = orderService.placeOrder(userId);
-            return ResponseEntity.ok(new ApiResponse("Success", order));
+            Order order = orderService.placeOrder(userId);
+            OrderDto orderDto = orderService.mapOrderToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Success", orderDto));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Error occurred", e.getMessage()));
         }
@@ -33,8 +35,9 @@ public class OrderController {
     @GetMapping("/order/{orderId}")
     public ResponseEntity<ApiResponse> getOrder(@PathVariable Long orderId) {
         try {
-            OrderDto order = orderService.getOrder(orderId);
-            return ResponseEntity.ok(new ApiResponse("Found", order));
+            Order order = orderService.getOrder(orderId);
+            OrderDto orderDto = orderService.mapOrderToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Found", orderDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -43,12 +46,13 @@ public class OrderController {
     @GetMapping("/order/user/{userId}")
     public ResponseEntity<ApiResponse> getOrdersByUserId(@PathVariable Long userId) {
         try {
-            List<OrderDto> orders = orderService.getOrdersByUser(userId);
-            return ResponseEntity.ok(new ApiResponse("Found", orders));
+            List<Order> orders = orderService.getOrdersByUser(userId);
+            List<OrderDto> orderDtos = orders.stream()
+                    .map(orderService::mapOrderToDto)
+                    .toList();
+            return ResponseEntity.ok(new ApiResponse("Found", orderDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
-
-
 }

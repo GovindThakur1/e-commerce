@@ -1,17 +1,18 @@
 package com.govind.ecommerce.service.order;
 
 import com.govind.ecommerce.dto.OrderDto;
+import com.govind.ecommerce.model.Order;
 
 import java.util.List;
 
 public interface IOrderService {
 
-    OrderDto placeOrder(Long userId);
+    Order placeOrder(Long userId);
 
-    OrderDto getOrder(Long orderId);
+    Order getOrder(Long orderId);
 
-    List<OrderDto> getOrdersByUser(Long userId);
+    List<Order> getOrdersByUser(Long userId);
 
 
-
+    OrderDto mapOrderToDto(Order order);
 }

@@ -1,5 +1,6 @@
 package com.govind.ecommerce.service.user;
 
+import com.govind.ecommerce.dto.UserDto;
 import com.govind.ecommerce.exception.AlreadyExistsException;
 import com.govind.ecommerce.exception.ResourceNotFoundException;
 import com.govind.ecommerce.model.User;
@@ -7,6 +8,7 @@ import com.govind.ecommerce.repository.UserRepository;
 import com.govind.ecommerce.request.CreateUserRequest;
 import com.govind.ecommerce.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public User getUserById(Long userId) {
@@ -57,5 +60,10 @@ public class UserService implements IUserService {
                 .ifPresentOrElse(userRepository::delete, () -> {
                     throw new ResourceNotFoundException("User not found");
                 });
+    }
+
+    @Override
+    public UserDto convertUserToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }

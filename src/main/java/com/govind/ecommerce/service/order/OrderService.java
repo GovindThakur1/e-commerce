@@ -1,5 +1,6 @@
 package com.govind.ecommerce.service.order;
 
+import com.govind.ecommerce.dto.OrderDto;
 import com.govind.ecommerce.enums.OrderStatus;
 import com.govind.ecommerce.exception.ResourceNotFoundException;
 import com.govind.ecommerce.model.Cart;
@@ -8,10 +9,10 @@ import com.govind.ecommerce.model.OrderItem;
 import com.govind.ecommerce.model.Product;
 import com.govind.ecommerce.repository.OrderRepository;
 import com.govind.ecommerce.repository.ProductRepository;
-import com.govind.ecommerce.repository.UserRepository;
 import com.govind.ecommerce.service.cart.ICartService;
 import com.govind.ecommerce.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,10 +29,11 @@ public class OrderService implements IOrderService {
     private final ProductRepository productRepository;
     private final ICartService cartService;
     private final IUserService userService;
+    private final ModelMapper modelMapper;
 
 
     @Override
-    public Order placeOrder(Long userId) {
+    public OrderDto placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
 
         Order order = createOrder(cart);
@@ -43,7 +45,7 @@ public class OrderService implements IOrderService {
         Order savedOrder = orderRepository.save(order);
 
         cartService.clearCart(cart.getId());
-        return savedOrder;
+        return mapOrderToDto(savedOrder);
     }
 
 
@@ -84,18 +86,24 @@ public class OrderService implements IOrderService {
 
 
     @Override
-    public Order getOrder(Long orderId) {
+    public OrderDto getOrder(Long orderId) {
         return orderRepository.findById(orderId)
+                .map(this::mapOrderToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     @Override
-    public List<Order> getOrdersByUser(Long userId) {
+    public List<OrderDto> getOrdersByUser(Long userId) {
         return Optional.of(userService.getUserById(userId))
                 .map(user -> orderRepository.findAllByUserId(user.getId()))
                 .map(orders -> orders.stream()
+                        .map(this::mapOrderToDto)
                         .toList()
                 )
                 .orElseThrow(() -> new ResourceNotFoundException("Order/s not found for this user"));
+    }
+
+    private OrderDto mapOrderToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
     }
 }

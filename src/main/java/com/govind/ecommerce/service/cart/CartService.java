@@ -2,6 +2,7 @@ package com.govind.ecommerce.service.cart;
 
 import com.govind.ecommerce.exception.ResourceNotFoundException;
 import com.govind.ecommerce.model.Cart;
+import com.govind.ecommerce.model.User;
 import com.govind.ecommerce.repository.CartItemRepository;
 import com.govind.ecommerce.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,11 @@ public class CartService implements ICartService {
 //        Long newCartId = cartIdGenerator.incrementAndGet();
 //        newCart.setId(newCartId);
         return cartRepository.save(newCart).getId();
+    }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
     }
 
 }
